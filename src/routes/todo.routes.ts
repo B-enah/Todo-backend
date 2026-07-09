@@ -22,8 +22,14 @@ router.post("/", async (req, res) => {
   if (!parsed.success) {
     return res.status(400).json({ error: parsed.error.flatten() });
   }
-  const [newTodo] = await db.insert(todos).values({ title: parsed.data.title }).returning();
-  res.status(201).json(newTodo);
+  
+  const [newTodo] = await db
+    .insert(todos)
+    .values({ title: parsed.data.title, userId: (req as any).user.id })
+    .returning();
+
+  res.status(201).json(newTodo);    
+
 });
 
 // PATCH toggle/update todo
